@@ -20,7 +20,7 @@ deploy_branch  = "gh-pages"
 public_dir      = "public"    # compiled site directory
 source_dir      = "source"    # source file directory
 blog_index_dir  = 'source'    # directory for your blog's index page (if you put your index in source/blog/index.html, set this to 'source/blog')
-deploy_dir      = "/home/tim/workspace/ttaubert-github"   # deploy directory (for Github pages deployment)
+deploy_dir      = "_deploy"   # deploy directory (for Github pages deployment)
 stash_dir       = "_stash"    # directory to stash posts for speedy generation
 posts_dir       = "_posts"    # directory for blog files
 themes_dir      = ".themes"   # directory for blog files
@@ -63,6 +63,11 @@ task :generate do
   end
 
   system "jekyll"
+
+  (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }
+  Rake::Task[:copydot].invoke(public_dir, deploy_dir)
+  puts "\n## copying #{public_dir} to #{deploy_dir}"
+  cp_r "#{public_dir}/.", deploy_dir
 end
 
 desc "Watch the site and regenerate when it changes"
